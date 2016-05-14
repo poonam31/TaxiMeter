@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">TaxiMeter</string>
+    <string name="title_activity_home_maps">Map</string>
+    <string name="title_activity_main">MainActivity</string>
+</resources>
