@@ -26,21 +26,22 @@ android:orientation="horizontal"
 <Button
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="Find path"
+    android:text="Search"
     android:id="@+id/btnFindPath" />
-<ImageView
+
+<!--<ImageView
     android:layout_marginLeft="20dp"
     android:layout_marginTop="5dp"
     android:layout_width="40dp"
     android:layout_height="40dp"
-    android:src="@drawable/ic_distance"/>
+    android:src="@drawable/ic_distance"/>-->
 
-<TextView
+<!--<TextView
     android:layout_marginLeft="5dp"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:text="0 km"
-    android:id="@+id/tvDistance" />
+    android:id="@+id/tvDistance" />-->
 
 <ImageView
     android:layout_marginLeft="20dp"
@@ -48,13 +49,19 @@ android:orientation="horizontal"
     android:layout_width="40dp"
     android:layout_height="40dp"
     android:padding="5dp"
-    android:src="@drawable/ic_clock"/>
-<TextView
-    android:layout_marginLeft="5dp"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="0 min"
-    android:id="@+id/tvDuration" />
+    android:src="@drawable/ic_dollar"/>
+
+    <SeekBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/seekBar"
+        android:layout_weight="1" />
+    <!--<TextView
+        android:layout_marginLeft="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0 min"
+        android:id="@+id/tvDuration" />-->
 
 </LinearLayout>
 
