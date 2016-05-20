@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
-    <file url="file://$PROJECT_DIR$/app/src/main/java/Modules/DirectionFinder.java" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/Modules/DirectionFinderListener.java" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/Modules/Distance.java" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/Modules/Duration.java" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/Modules/Route.java" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/end_green.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/ic_clock.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/ic_distance.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/start_blue.png" charset="windows-1252" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

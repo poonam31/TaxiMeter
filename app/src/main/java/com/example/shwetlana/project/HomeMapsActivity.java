@@ -98,6 +98,7 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
         }
     };
 
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
