@@ -69,7 +69,9 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
     }
 
     private void sendRequest() {
-        String origin = etOrigin.getText().toString();
+        /*-----------------------------------Changes Implemented for GetOrigin-----------*/
+        String origin = mMap.getMyLocation().toString();
+       // String origin = etOrigin.getText().toString();
         String destination = etDestination.getText().toString();
         if (origin.isEmpty()) {
             Toast.makeText(this, "Please enter origin address!", Toast.LENGTH_SHORT).show();
