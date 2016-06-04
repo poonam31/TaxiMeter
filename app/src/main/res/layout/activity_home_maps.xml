@@ -10,13 +10,15 @@
 android:layout_width="match_parent"
 android:layout_height="wrap_content"
 android:id="@+id/etOrigin"
-android:hint="Enter origin address" />
+android:hint="Enter origin address"
+    android:text="5151 state university drive"/>
 
 <EditText
 android:layout_width="match_parent"
 android:layout_height="wrap_content"
 android:hint="Enter destination address"
-android:id="@+id/etDestination" />
+android:id="@+id/etDestination"
+    android:text="1529 prospect ave san gabriel"/>
 
 <LinearLayout
 android:layout_width="match_parent"
