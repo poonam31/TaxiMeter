@@ -70,8 +70,8 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
 
     private void sendRequest() {
         /*-----------------------------------Changes Implemented for GetOrigin-----------*/
-        String origin = mMap.getMyLocation().toString();
-       // String origin = etOrigin.getText().toString();
+        //String origin = mMap.getMyLocation().toString();
+       String origin = etOrigin.getText().toString();
         String destination = etDestination.getText().toString();
         if (origin.isEmpty()) {
             Toast.makeText(this, "Please enter origin address!", Toast.LENGTH_SHORT).show();
@@ -113,10 +113,9 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
 
             return;
         }
-        mMap.setMyLocationEnabled(true);
+        mMap.setMyLocationEnabled(false);
         mMap.setOnMyLocationChangeListener(myLocationChangeListener);
     }
-
 
 
     @Override
@@ -152,7 +151,7 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
 
         for (Route route : routes) {
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(route.startLocation, 16));
-            /*((TextView) findViewById(R.id.tvDuration)).setText(route.duration.text);
+           /* ((TextView) findViewById(R.id.tvDuration)).setText(route.duration.text);
             ((TextView) findViewById(R.id.tvDistance)).setText(route.distance.text);*/
 
             originMarkers.add(mMap.addMarker(new MarkerOptions()
