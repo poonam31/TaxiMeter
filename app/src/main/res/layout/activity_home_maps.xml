@@ -52,10 +52,23 @@ android:orientation="horizontal"
     android:src="@drawable/ic_dollar"/>
 
     <SeekBar
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
+        android:layout_weight="1.5"
         android:layout_height="wrap_content"
         android:id="@+id/seekBar"
-        android:layout_weight="1" />
+        android:max="10"
+        android:progress="15"
+        android:indeterminate="false"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:minWidth="70dp"
+        android:layout_height="@dimen/text_view_height"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="1"
+        android:id="@+id/ratePerMile"
+        android:textSize="@dimen/text_size"/>
     <!--<TextView
         android:layout_marginLeft="5dp"
         android:layout_width="wrap_content"

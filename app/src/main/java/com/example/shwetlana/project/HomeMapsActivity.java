@@ -3,15 +3,14 @@ package com.example.shwetlana.project;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationManager;
+import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +43,9 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
     private List<Marker> destinationMarkers = new ArrayList<>();
     private List<Polyline> polylinePaths = new ArrayList<>();
     private ProgressDialog progressDialog;
+    private SeekBar seekBar;
+    private TextView rateMile;
+    double ratePerMile = 0.5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +67,30 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
                 sendRequest();
             }
         });
+
+        seekBar = (SeekBar) findViewById(R.id.seekBar);
+        rateMile = (TextView) findViewById(R.id.ratePerMile);
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+
+                rateMile.setText("" + String.valueOf(i));
+                ratePerMile = i+0.5;
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        rateMile.setText("" + seekBar.getProgress());
 
     }
 
