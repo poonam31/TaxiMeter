@@ -19,6 +19,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -47,14 +48,20 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
     private TextView rateMile;
     double ratePerMile = 0.5;
 
+    private GoogleMap googleMap;
+   // private AnimatingMarkersFragment mapFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        googleMap = mapFragment.getMap();
 
 
         btnFindPath = (Button) findViewById(R.id.btnFindPath);
@@ -177,8 +184,8 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
 
         for (Route route : routes) {
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(route.startLocation, 16));
-           /* ((TextView) findViewById(R.id.tvDuration)).setText(route.duration.text);
-            ((TextView) findViewById(R.id.tvDistance)).setText(route.distance.text);*/
+           /* ((TextView) findViewById(R.id.tvDuration)).setText(route.duration.text);*/
+            ((TextView) findViewById(R.id.tvDistance)).setText(route.distance.text);
 
             originMarkers.add(mMap.addMarker(new MarkerOptions()
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue))
@@ -199,6 +206,38 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
 
             polylinePaths.add(mMap.addPolyline(polylineOptions));
         }
+    }
+
+
+    private void panCamera() {
+
+        LatLng begin = googleMap.getCameraPosition().target;
+
+        CameraPosition cameraPosition =
+                new CameraPosition.Builder()
+                        .target(begin)
+                        .bearing(45)
+                        .tilt(45)
+                        .zoom(googleMap.getCameraPosition().zoom)
+                        .build();
+
+        googleMap.animateCamera(
+                CameraUpdateFactory.newCameraPosition(cameraPosition),
+                3000,
+                new GoogleMap.CancelableCallback() {
+
+                    @Override
+                    public void onFinish() {
+                        System.out.println("finished camera");
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        System.out.println("cancelling camera");
+                    }
+                }
+        );
+
     }
 
 

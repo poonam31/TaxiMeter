@@ -29,22 +29,22 @@ android:orientation="horizontal"
     android:text="Search"
     android:id="@+id/btnFindPath" />
 
-<!--<ImageView
-    android:layout_marginLeft="20dp"
+<ImageView
+    android:layout_marginLeft="10dp"
     android:layout_marginTop="5dp"
     android:layout_width="40dp"
     android:layout_height="40dp"
-    android:src="@drawable/ic_distance"/>-->
+    android:src="@drawable/ic_distance"/>
 
-<!--<TextView
+<TextView
     android:layout_marginLeft="5dp"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:text="0 km"
-    android:id="@+id/tvDistance" />-->
+    android:id="@+id/tvDistance" />
 
 <ImageView
-    android:layout_marginLeft="20dp"
+    android:layout_marginLeft="10dp"
     android:layout_marginTop="5dp"
     android:layout_width="40dp"
     android:layout_height="40dp"
@@ -63,12 +63,13 @@ android:orientation="horizontal"
 
     <TextView
         android:layout_width="wrap_content"
-        android:minWidth="70dp"
+        android:minWidth="30dp"
         android:layout_height="@dimen/text_view_height"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="1"
         android:id="@+id/ratePerMile"
         android:textSize="@dimen/text_size"/>
+
     <!--<TextView
         android:layout_marginLeft="5dp"
         android:layout_width="wrap_content"
