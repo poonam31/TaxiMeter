@@ -8,8 +8,8 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,15 +38,27 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
 
     private GoogleMap mMap;
     private Button btnFindPath;
-    private EditText etOrigin;
-    private EditText etDestination;
+    //private EditText etOrigin;
+    //private EditText etDestination;
     private List<Marker> originMarkers = new ArrayList<>();
     private List<Marker> destinationMarkers = new ArrayList<>();
     private List<Polyline> polylinePaths = new ArrayList<>();
     private ProgressDialog progressDialog;
     private SeekBar seekBar;
-    private TextView rateMile;
-    double ratePerMile = 0.5;
+    private TextView tvRatePerMile;
+    double ratePerMile = 0;
+
+    AutoCompleteTextView etDestination;
+    AutoCompleteTextView etOrigin;
+    String to = "" ;
+    String from="" ;
+    String distance = "";
+    //String duration = "";
+    int rate = 2; // per mile rate , shud come from db the price rate of selected taxi
+    private PlacesAutoCompleteAdapter adapter;
+    Button btnCalculate;
+    TextView tvCalculatedPrice;
+    TextView tvDistance;
 
     private GoogleMap googleMap;
    // private AnimatingMarkersFragment mapFragment;
@@ -63,10 +75,18 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
 
         googleMap = mapFragment.getMap();
 
+        adapter = new PlacesAutoCompleteAdapter(getApplicationContext(),
+                R.layout.autocomplete_list_text);
 
         btnFindPath = (Button) findViewById(R.id.btnFindPath);
-        etOrigin = (EditText) findViewById(R.id.etOrigin);
-        etDestination = (EditText) findViewById(R.id.etDestination);
+        etOrigin = (AutoCompleteTextView) findViewById(R.id.etOrigin);
+        etOrigin.setAdapter(adapter);
+        etDestination = (AutoCompleteTextView) findViewById(R.id.etDestination);
+        etDestination.setAdapter(adapter);
+
+        tvDistance = (TextView) findViewById(R.id.tvDistance);
+        tvCalculatedPrice = (TextView) findViewById(R.id.tvCalculatedPrice);
+
 
         btnFindPath.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,13 +96,13 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
         });
 
         seekBar = (SeekBar) findViewById(R.id.seekBar);
-        rateMile = (TextView) findViewById(R.id.ratePerMile);
+        tvRatePerMile = (TextView) findViewById(R.id.tvRatePerMile);
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
 
-                rateMile.setText("" + String.valueOf(i));
+                tvRatePerMile.setText("" + String.valueOf(i));
                 ratePerMile = i+0.5;
 
             }
@@ -97,7 +117,27 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
 
             }
         });
-        rateMile.setText("" + seekBar.getProgress());
+        tvRatePerMile.setText("" + seekBar.getProgress());
+
+
+        btnCalculate = (Button) findViewById(R.id.btnCalculate);
+        btnCalculate.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+
+                distance = tvDistance.getText().toString();
+                String[] res = distance.split("\\s+");
+
+                double f = Double.valueOf(res[0]) * Double.valueOf(tvRatePerMile.getText().toString()) ;
+
+                String dd = "  $" + f + "" ;
+
+                tvCalculatedPrice.setVisibility(View.VISIBLE);
+                tvCalculatedPrice.setText(dd);
+
+            }
+        });
 
     }
 
@@ -239,6 +279,5 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
         );
 
     }
-
 
 }

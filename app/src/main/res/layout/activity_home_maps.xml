@@ -5,18 +5,42 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+    <AutoCompleteTextView
+        android:id="@+id/etOrigin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:layout_marginTop="10dp"
+        android:hint="Enter origin address"
+        android:inputType="textNoSuggestions"
+        android:textColor="#481554" >
 
-<EditText
-android:layout_width="match_parent"
-android:layout_height="wrap_content"
-android:id="@+id/etOrigin"
-android:hint="Enter origin address" />
+        <requestFocus />
 
-<EditText
-android:layout_width="match_parent"
-android:layout_height="wrap_content"
-android:hint="Enter destination address"
-android:id="@+id/etDestination" />
+    </AutoCompleteTextView>
+
+    <AutoCompleteTextView
+        android:id="@+id/etDestination"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:ems="10"
+        android:hint="Enter destination address"
+        android:inputType="textNoSuggestions"
+        android:textColor="#481554" />
+
+
+<!--<EditText-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="wrap_content"-->
+<!--android:id="@+id/etOrigin"-->
+<!--android:hint="Enter origin address" />-->
+
+<!--<EditText-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="wrap_content"-->
+<!--android:hint="Enter destination address"-->
+<!--android:id="@+id/etDestination" />-->
 
 <LinearLayout
 android:layout_width="match_parent"
@@ -40,7 +64,7 @@ android:orientation="horizontal"
     android:layout_marginLeft="5dp"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="0 km"
+    android:text="0 mi"
     android:id="@+id/tvDistance" />
 
 <ImageView
@@ -67,8 +91,8 @@ android:orientation="horizontal"
         android:layout_height="@dimen/text_view_height"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="1"
-        android:id="@+id/ratePerMile"
-        android:textSize="@dimen/text_size"/>
+        android:id="@+id/tvRatePerMile"
+        android:textSize="20sp"/>
 
     <!--<TextView
         android:layout_marginLeft="5dp"
@@ -78,6 +102,27 @@ android:orientation="horizontal"
         android:id="@+id/tvDuration" />-->
 
 </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Get Total Price"
+            android:id="@+id/btnCalculate" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:minWidth="70dp"
+            android:visibility="gone"
+            android:layout_height="@dimen/text_view_height"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id="@+id/tvCalculatedPrice"
+            android:textSize="20sp"/>
+
+    </LinearLayout>
 
     <fragment
         android:name="com.google.android.gms.maps.SupportMapFragment"
