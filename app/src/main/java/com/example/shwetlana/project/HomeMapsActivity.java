@@ -37,6 +37,7 @@ import Modules.Route;
 public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCallback, DirectionFinderListener {
 
     private GoogleMap mMap;
+    private GoogleMap cabsMap;
     private Button btnFindPath;
     //private EditText etOrigin;
     //private EditText etDestination;
