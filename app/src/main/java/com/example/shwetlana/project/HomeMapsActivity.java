@@ -129,9 +129,9 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
                 distance = tvDistance.getText().toString();
                 String[] res = distance.split("\\s+");
 
-                double f = Double.valueOf(res[0]) * Double.valueOf(tvRatePerMile.getText().toString()) ;
+                double f = Double.valueOf(res[0]) * Double.valueOf(tvRatePerMile.getText().toString());
 
-                String dd = "  $" + f + "" ;
+                String dd = "  $" + f + "";
 
                 tvCalculatedPrice.setVisibility(View.VISIBLE);
                 tvCalculatedPrice.setText(dd);
@@ -240,6 +240,33 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
                     geodesic(true)./*
                     color(Color.BLUE).*/
                     width(10);
+
+
+            //Hardcoded Taxi's...................TEMPORARY
+            LatLng cab1 = new LatLng(34.069433, -118.167755);
+            mMap.addMarker(new MarkerOptions()
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.taxi2))
+                            .position(cab1)
+                            .title("CAB 1"));
+
+            LatLng cab2 = new LatLng(34.057345, -118.172390);
+            mMap.addMarker(new MarkerOptions()
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.taxi2))
+                    .position(cab2)
+                    .title("CAB 2"));
+
+            LatLng cab3 = new LatLng(34.076827, -118.156769);
+            mMap.addMarker(new MarkerOptions()
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.taxi2))
+                    .position(cab3)
+                    .title("CAB 3"));
+
+            LatLng cab4 = new LatLng(34.051254, -118.165439);
+            mMap.addMarker(new MarkerOptions()
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.taxi2))
+                    .position(cab4)
+                    .title("CAB 4"));
+
 
             for (int i = 0; i < route.points.size(); i++)
                 polylineOptions.add(route.points.get(i));
