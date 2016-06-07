@@ -3,11 +3,20 @@ package com.example.shwetlana.project;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
+import android.graphics.Interpolator;
+import android.graphics.Path;
+import android.graphics.Point;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
+import android.view.animation.BaseInterpolator;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.PathInterpolator;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.SeekBar;
@@ -17,6 +26,7 @@ import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -48,6 +58,7 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
     private SeekBar seekBar;
     private TextView tvRatePerMile;
     double ratePerMile = 0;
+    private Marker marker;
 
     AutoCompleteTextView etDestination;
     AutoCompleteTextView etOrigin;
@@ -224,7 +235,7 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
         destinationMarkers = new ArrayList<>();
 
         for (Route route : routes) {
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(route.startLocation, 16));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(route.startLocation, 12));
            /* ((TextView) findViewById(R.id.tvDuration)).setText(route.duration.text);*/
             ((TextView) findViewById(R.id.tvDistance)).setText(route.distance.text);
 
@@ -250,11 +261,11 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
                             .position(cab1)
                             .title("CAB 1"));
 
-            LatLng cab2 = new LatLng(34.057345, -118.172390);
+            /*LatLng cab2 = new LatLng(34.057345, -118.172390);
             mMap.addMarker(new MarkerOptions()
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.taxi2))
                     .position(cab2)
-                    .title("CAB 2"));
+                    .title("CAB 2"));*/
 
             LatLng cab3 = new LatLng(34.076827, -118.156769);
             mMap.addMarker(new MarkerOptions()
@@ -268,14 +279,50 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
                     .position(cab4)
                     .title("CAB 4"));
 
-
-            for (int i = 0; i < route.points.size(); i++)
+             //Marker movingMarker = mMap.addMarker(new MarkerOptions().position(route.points.get(0)));
+            for (int i = 0; i < route.points.size(); i++) {
                 polylineOptions.add(route.points.get(i));
-
-            polylinePaths.add(mMap.addPolyline(polylineOptions));
+            }
+                polylinePaths.add(mMap.addPolyline(polylineOptions));
+           // for (int i = 0; i < routes.size(); i++) {
+                animateMarker(routes.get(0).startLocation
+                        , routes.get(0).endLocation);
+           // }
         }
     }
 
+    public void animateMarker(final LatLng fromPosition, final LatLng toPosition/*,
+                              final boolean hideMarker*/) {
+        final Handler handler = new Handler();
+        final long start = SystemClock.uptimeMillis();
+
+        marker = mMap.addMarker(new MarkerOptions()
+                .position(fromPosition));
+        marker.setPosition(fromPosition);
+        final long duration = 5000;
+        //marker.remove();
+        final LinearInterpolator interpolator = new LinearInterpolator();
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Log.i("------------------", marker.toString());
+                long elapsed = SystemClock.uptimeMillis() - start;
+                float t = interpolator.getInterpolation((float) elapsed
+                        / duration);
+                double lng = t * toPosition.longitude + (1 - t)
+                        * fromPosition.longitude;
+                double lat = t * toPosition.latitude + (1 - t)
+                        * fromPosition.latitude;
+                marker.setPosition(new LatLng(lat, lng));
+
+                if (t < 1.0) {
+                    // Post again 16ms later.
+                    handler.postDelayed(this, 16);
+                }
+            }
+        });
+    }
 
     private void panCamera() {
 

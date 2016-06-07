@@ -12,6 +12,7 @@
         android:ems="10"
         android:layout_marginTop="10dp"
         android:hint="Enter origin address"
+        android:text="5151 state university dr"
         android:inputType="textNoSuggestions"
         android:textColor="#481554" >
 
@@ -26,6 +27,7 @@
         android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:ems="10"
         android:hint="Enter destination address"
+        android:text="1529 Prospect ave San Gabriel"
         android:inputType="textNoSuggestions"
         android:textColor="#481554" />
 
