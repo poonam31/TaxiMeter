@@ -1,7 +1,9 @@
 package com.example.shwetlana.project;
 
 import android.Manifest;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Interpolator;
 import android.graphics.Path;
@@ -12,6 +14,7 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.BaseInterpolator;
@@ -23,6 +26,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -49,8 +53,6 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
     private GoogleMap mMap;
     private GoogleMap cabsMap;
     private Button btnFindPath;
-    //private EditText etOrigin;
-    //private EditText etDestination;
     private List<Marker> originMarkers = new ArrayList<>();
     private List<Marker> destinationMarkers = new ArrayList<>();
     private List<Polyline> polylinePaths = new ArrayList<>();
@@ -58,7 +60,8 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
     private SeekBar seekBar;
     private TextView tvRatePerMile;
     double ratePerMile = 0;
-    private Marker marker;
+    private Marker mm;// =
+    private List<LatLng> pathpoints = new ArrayList<>();
 
     AutoCompleteTextView etDestination;
     AutoCompleteTextView etOrigin;
@@ -190,10 +193,6 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        /*LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));*/
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             return;
@@ -225,6 +224,9 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
                 polyline.remove();
             }
         }
+        if (mm != null) {
+            mm.remove();
+        }
     }
 
     @Override
@@ -234,6 +236,7 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
         originMarkers = new ArrayList<>();
         destinationMarkers = new ArrayList<>();
 
+        pathpoints = new ArrayList<>();
         for (Route route : routes) {
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(route.startLocation, 12));
            /* ((TextView) findViewById(R.id.tvDuration)).setText(route.duration.text);*/
@@ -273,22 +276,79 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
                     .position(cab3)
                     .title("CAB 3"));
 
-            LatLng cab4 = new LatLng(34.051254, -118.165439);
+            /*LatLng cab4 = new LatLng(34.051254, -118.165439);
             mMap.addMarker(new MarkerOptions()
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.taxi2))
                     .position(cab4)
-                    .title("CAB 4"));
+                    .title("CAB 4"));*/
 
              //Marker movingMarker = mMap.addMarker(new MarkerOptions().position(route.points.get(0)));
             for (int i = 0; i < route.points.size(); i++) {
                 polylineOptions.add(route.points.get(i));
+                pathpoints.add(route.points.get(i));
             }
-                polylinePaths.add(mMap.addPolyline(polylineOptions));
-           // for (int i = 0; i < routes.size(); i++) {
-                animateMarker(routes.get(0).startLocation
-                        , routes.get(0).endLocation);
-           // }
+            polylinePaths.add(mMap.addPolyline(polylineOptions));
+
         }
+        mm = mMap.addMarker(new MarkerOptions().position(pathpoints.get(0)));
+        mm.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+        //mm.setVisible(false);
+        /*for(int i = 1; i < 40; i++) {
+            animateMarker(pathpoints.get(i - 1), pathpoints.get(i));
+        }*/
+        animateMarker(pathpoints.get(0), pathpoints.get(79));
+        notification();
+        //
+    }
+
+    public void changeCurrentPosMarker(LatLng latLng) {
+        // add marker
+        if (mm != null) {
+            mm.remove();
+        }
+        MarkerOptions options = new MarkerOptions()
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green))
+                .snippet("")
+                .position(latLng);
+        mm = mMap.addMarker(options);
+
+    }
+
+    public void animates(final Marker mm, final LatLng toPosition/*,
+                              final boolean hideMarker*/) {
+        final Handler handler = new Handler();
+        final long start = SystemClock.uptimeMillis();
+
+
+        final long duration = 20000;
+        final LinearInterpolator interpolator = new LinearInterpolator();
+
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                //Log.i("------------------", marker.toString());
+                long elapsed = SystemClock.uptimeMillis() - start;
+                float t = interpolator.getInterpolation((float) elapsed
+                        / duration);
+                double lng = t * toPosition.longitude + (1 - t)
+                        * mm.getPosition().longitude;
+                double lat = t * toPosition.latitude + (1 - t)
+                        * mm.getPosition().latitude;
+                //mm.remove();
+                //mm.setPosition(new LatLng(lat, lng));
+                //mm = mMap.addMarker(new MarkerOptions().position(new LatLng(lat,lng)));
+                mm.setPosition(toPosition);
+                mm.setVisible(true);
+                //mm.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                if (t < 1.0) {
+                    // Post again 16ms later.
+                    handler.postDelayed(this, 16);
+                }
+            }
+        });
+        Log.i("Marker postion---------",mm.getPosition().toString());
+
     }
 
     public void animateMarker(final LatLng fromPosition, final LatLng toPosition/*,
@@ -296,34 +356,53 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
         final Handler handler = new Handler();
         final long start = SystemClock.uptimeMillis();
 
-        marker = mMap.addMarker(new MarkerOptions()
-                .position(fromPosition));
-        marker.setPosition(fromPosition);
-        final long duration = 5000;
-        //marker.remove();
+        final long duration = 30000;
         final LinearInterpolator interpolator = new LinearInterpolator();
 
+        if (mm != null) {
+            mm.remove();
+        }
+        mm = mMap.addMarker(new MarkerOptions().position(fromPosition));
         handler.post(new Runnable() {
             @Override
             public void run() {
-                Log.i("------------------", marker.toString());
+                //Log.i("------------------", marker.toString());
                 long elapsed = SystemClock.uptimeMillis() - start;
                 float t = interpolator.getInterpolation((float) elapsed
                         / duration);
+
                 double lng = t * toPosition.longitude + (1 - t)
                         * fromPosition.longitude;
                 double lat = t * toPosition.latitude + (1 - t)
                         * fromPosition.latitude;
-                marker.setPosition(new LatLng(lat, lng));
 
+                //mm = mMap.addMarker(new MarkerOptions().position(toPosition));
+                //mm.setPosition(toPosition);
+                Log.i("-------------", t + "");
+
+                Log.i("-------------", lat + lng + "");
+                mm.setPosition(new LatLng(lat, lng));
+                mm.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
                 if (t < 1.0) {
                     // Post again 16ms later.
                     handler.postDelayed(this, 16);
                 }
             }
         });
+        Log.i("----------------------", mm.getPosition().toString());
     }
 
+    private  void notification(){
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(getApplicationContext())
+                        .setSmallIcon(R.drawable.taxi2)
+                        .setContentTitle("Taxi has Arrived")
+                        .setContentText("Your Taxi Arrived!");
+
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.notify(1, mBuilder.build());
+    }
     private void panCamera() {
 
         LatLng begin = googleMap.getCameraPosition().target;
