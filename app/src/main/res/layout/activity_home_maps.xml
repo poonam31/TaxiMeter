@@ -1,137 +1,168 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.shwetlana.project.HomeMapsActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    tools:context="com.example.shwetlana.project.HomeMapsActivity">
 
     <AutoCompleteTextView
         android:id="@+id/etOrigin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
         android:layout_marginTop="10dp"
+        android:ems="10"
         android:hint="Enter origin address"
-        android:text="5151 state university dr"
         android:inputType="textNoSuggestions"
-        android:textColor="#481554" >
+        android:text="5151 state university dr"
+        android:textColor="#481554">
 
         <requestFocus />
 
     </AutoCompleteTextView>
 
-    <AutoCompleteTextView
-        android:id="@+id/etDestination"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:ems="10"
-        android:hint="Enter destination address"
-        android:text="1529 Prospect ave San Gabriel"
-        android:inputType="textNoSuggestions"
-        android:textColor="#481554" />
+        android:orientation="horizontal">
 
-
-<!--<EditText-->
-<!--android:layout_width="match_parent"-->
-<!--android:layout_height="wrap_content"-->
-<!--android:id="@+id/etOrigin"-->
-<!--android:hint="Enter origin address" />-->
-
-<!--<EditText-->
-<!--android:layout_width="match_parent"-->
-<!--android:layout_height="wrap_content"-->
-<!--android:hint="Enter destination address"-->
-<!--android:id="@+id/etDestination" />-->
-
-<LinearLayout
-android:layout_width="match_parent"
-android:layout_height="wrap_content"
-android:orientation="horizontal"
-    >
-<Button
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Search"
-    android:id="@+id/btnFindPath" />
-
-<ImageView
-    android:layout_marginLeft="10dp"
-    android:layout_marginTop="5dp"
-    android:layout_width="40dp"
-    android:layout_height="40dp"
-    android:src="@drawable/ic_distance"/>
-
-<TextView
-    android:layout_marginLeft="5dp"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="0 mi"
-    android:id="@+id/tvDistance" />
-
-<ImageView
-    android:layout_marginLeft="10dp"
-    android:layout_marginTop="5dp"
-    android:layout_width="40dp"
-    android:layout_height="40dp"
-    android:padding="5dp"
-    android:src="@drawable/ic_dollar"/>
-
-    <SeekBar
-        android:layout_width="0dp"
-        android:layout_weight="1.5"
-        android:layout_height="wrap_content"
-        android:id="@+id/seekBar"
-        android:max="10"
-        android:progress="15"
-        android:indeterminate="false"
-        />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:minWidth="30dp"
-        android:layout_height="@dimen/text_view_height"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="1"
-        android:id="@+id/tvRatePerMile"
-        android:textSize="20sp"/>
-
-    <!--<TextView
-        android:layout_marginLeft="5dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="0 min"
-        android:id="@+id/tvDuration" />-->
-
-</LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        <AutoCompleteTextView
+            android:id="@+id/etDestination"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="Enter destination address"
+            android:inputType="textNoSuggestions"
+            android:text="1529 Prospect ave San Gabriel"
+            android:textColor="#481554" />
 
         <Button
+            android:id="@+id/btnFindPath"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignBottom="@+id/etDestination"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/etDestination"
+            android:layout_marginBottom="8dp"
+            android:background="@android:drawable/ic_menu_search" />
+    </RelativeLayout>
+
+
+    <!--<EditText-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:id="@+id/etOrigin"-->
+    <!--android:hint="Enter origin address" />-->
+
+    <!--<EditText-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:hint="Enter destination address"-->
+    <!--android:id="@+id/etDestination" />-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnFindPath1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Get Total Price"
-            android:id="@+id/btnCalculate" />
+            android:text="Search"
+            android:visibility="gone" />
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/ic_distance" />
+
         <TextView
+            android:id="@+id/tvDistance"
             android:layout_width="wrap_content"
-            android:minWidth="70dp"
-            android:visibility="gone"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="0 mi" />
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:padding="5dp"
+            android:src="@drawable/ic_dollar" />
+
+        <SeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.5"
+            android:indeterminate="false"
+            android:max="10"
+            android:progress="15" />
+
+        <TextView
+            android:id="@+id/tvRatePerMile"
+            android:layout_width="wrap_content"
             android:layout_height="@dimen/text_view_height"
+            android:minWidth="30dp"
+            android:text="1"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:id="@+id/tvCalculatedPrice"
-            android:textSize="20sp"/>
+            android:textSize="20sp" />
+
+        <!--<TextView
+            android:layout_marginLeft="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0 min"
+            android:id="@+id/tvDuration" />-->
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnCalculate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/buttonshapeborder"
+            android:text="Get Total Price"
+            android:textColor="#ff9800" />
+
+        <TextView
+            android:id="@+id/tvCalculatedPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/text_view_height"
+            android:layout_weight="1"
+            android:minWidth="70dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#e51c23"
+            android:textSize="20sp"
+            android:visibility="invisible" />
+
+        <Button
+            android:id="@+id/btnLogout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_weight="1"
+            android:background="@drawable/buttonshapeborder"
+            android:text="Logout"
+            android:textColor="#ff9800" />
+    </LinearLayout>
+
     <fragment
+        android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/map"
-        />
+        android:layout_height="wrap_content" />
     <!--xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/map"
@@ -141,5 +172,5 @@ android:orientation="horizontal"
        tools:context="com.example.shwetlana.project.HomeMapsActivity"-->
 
 
-    </LinearLayout>
+</LinearLayout>
 

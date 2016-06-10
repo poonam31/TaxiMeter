@@ -2,10 +2,8 @@ package com.example.shwetlana.project;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Interpolator;
-import android.graphics.Path;
-import android.graphics.Point;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,9 +12,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.BaseInterpolator;
+import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
-import android.view.animation.PathInterpolator;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.SeekBar;
@@ -62,8 +59,8 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
 
     AutoCompleteTextView etDestination;
     AutoCompleteTextView etOrigin;
-    String to = "" ;
-    String from="" ;
+    String to = "";
+    String from = "";
     String distance = "";
     //String duration = "";
     int rate = 2; // per mile rate , shud come from db the price rate of selected taxi
@@ -73,7 +70,10 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
     TextView tvDistance;
 
     private GoogleMap googleMap;
-   // private AnimatingMarkersFragment mapFragment;
+    private Button btnLogout;
+    private List<Route> taxiPath;
+//    private Marker selectedMarker;
+    // private AnimatingMarkersFragment mapFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,7 +115,7 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
 
                 tvRatePerMile.setText("" + String.valueOf(i));
-                ratePerMile = i+0.5;
+                ratePerMile = i + 0.5;
 
             }
 
@@ -133,6 +133,7 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
 
 
         btnCalculate = (Button) findViewById(R.id.btnCalculate);
+        btnLogout = (Button) findViewById(R.id.btnLogout);
         btnCalculate.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -143,10 +144,18 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
 
                 double f = Double.valueOf(res[0]) * Double.valueOf(tvRatePerMile.getText().toString());
 
-                String dd = "  $" + f + "";
+                String dd = "  $" + String.format("%.2f", f) + "";
 
                 tvCalculatedPrice.setVisibility(View.VISIBLE);
                 tvCalculatedPrice.setText(dd);
+
+            }
+        });
+        btnLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(HomeMapsActivity.this,LoginActivity.class));
+                finish();
 
             }
         });
@@ -156,7 +165,7 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
     private void sendRequest() {
         /*-----------------------------------Changes Implemented for GetOrigin-----------*/
         //String origin = mMap.getMyLocation().toString();
-       String origin = etOrigin.getText().toString();
+        String origin = etOrigin.getText().toString();
         String destination = etDestination.getText().toString();
         if (origin.isEmpty()) {
             Toast.makeText(this, "Please enter origin address!", Toast.LENGTH_SHORT).show();
@@ -172,6 +181,8 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+        //Hardcoded Taxi's...................TEMPORARY
+
     }
 
 
@@ -179,7 +190,7 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
         @Override
         public void onMyLocationChange(Location location) {
             LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
-            if(mMap != null){
+            if (mMap != null) {
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(loc, 16.0f));
             }
         }
@@ -200,6 +211,67 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
         }
         mMap.setMyLocationEnabled(false);
         mMap.setOnMyLocationChangeListener(myLocationChangeListener);
+        LatLng cab1 = new LatLng(34.069433, -118.167755);
+        mMap.addMarker(new MarkerOptions()
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.taxi2))
+                .position(cab1)
+                .title("CAB 1").snippet("Northeast Los Angeles, Los Angeles, CA, USA"));
+
+            /*LatLng cab2 = new LatLng(34.057345, -118.172390);
+            mMap.addMarker(new MarkerOptions()
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.taxi2))
+                    .position(cab2)
+                    .title("CAB 2"));*/
+
+        LatLng cab3 = new LatLng(34.076827, -118.156769);
+        mMap.addMarker(new MarkerOptions()
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.taxi2))
+                .position(cab3)
+                .title("CAB 3").snippet("2956 W Shorb St, Alhambra, CA 91803, USA"));
+
+        LatLng cab4 = new LatLng(34.051254, -118.165439);
+        mMap.addMarker(new MarkerOptions()
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.taxi2))
+                .position(cab4)
+                .title("CAB 4").snippet("Monterey Park, CA, USA"));
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(final Marker marker) {
+                try {
+                    new DirectionFinder(new DirectionFinderListener() {
+                        @Override
+                        public void onDirectionFinderStart() {
+                            progressDialog = ProgressDialog.show(HomeMapsActivity.this, "Please wait.",
+                                    "Getting Taxi to Orgin..!", true);
+                        }
+
+                        @Override
+                        public void onDirectionFinderSuccess(List<Route> route) {
+                            progressDialog.dismiss();
+                            //HomeMapsActivity.this.onDirectionFinderSuccess(route);
+
+                            List<LatLng> tmpListroute = new ArrayList<LatLng>();
+                            tmpListroute.addAll(route.get(0).points);
+                            if (taxiPath != null) {
+                                List<LatLng> mainPath = taxiPath.get(0).points;
+                                for (LatLng item :
+                                        mainPath) {
+                                    tmpListroute.add(item);
+
+                                }
+                                setAnimation(mMap, tmpListroute, marker);
+                            } else {
+                                setAnimation(mMap, tmpListroute, marker);
+                            }
+                        }
+                    }, marker.getSnippet(), etOrigin.getText().toString()).execute();
+                } catch (Exception e) {
+                    progressDialog.dismiss();
+                    e.printStackTrace();
+                }
+                return false;
+            }
+        });
     }
 
 
@@ -221,7 +293,7 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
         }
 
         if (polylinePaths != null) {
-            for (Polyline polyline:polylinePaths ) {
+            for (Polyline polyline : polylinePaths) {
                 polyline.remove();
             }
         }
@@ -229,13 +301,14 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
 
     @Override
     public void onDirectionFinderSuccess(List<Route> routes) {
+        taxiPath = routes;
         progressDialog.dismiss();
         polylinePaths = new ArrayList<>();
         originMarkers = new ArrayList<>();
         destinationMarkers = new ArrayList<>();
 
         for (Route route : routes) {
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(route.startLocation, 12));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(route.startLocation, 13));
            /* ((TextView) findViewById(R.id.tvDuration)).setText(route.duration.text);*/
             ((TextView) findViewById(R.id.tvDistance)).setText(route.distance.text);
 
@@ -254,40 +327,21 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
                     width(10);
 
 
-            //Hardcoded Taxi's...................TEMPORARY
-            LatLng cab1 = new LatLng(34.069433, -118.167755);
-            mMap.addMarker(new MarkerOptions()
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.taxi2))
-                            .position(cab1)
-                            .title("CAB 1"));
-
-            /*LatLng cab2 = new LatLng(34.057345, -118.172390);
-            mMap.addMarker(new MarkerOptions()
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.taxi2))
-                    .position(cab2)
-                    .title("CAB 2"));*/
-
-            LatLng cab3 = new LatLng(34.076827, -118.156769);
-            mMap.addMarker(new MarkerOptions()
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.taxi2))
-                    .position(cab3)
-                    .title("CAB 3"));
-
-            LatLng cab4 = new LatLng(34.051254, -118.165439);
-            mMap.addMarker(new MarkerOptions()
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.taxi2))
-                    .position(cab4)
-                    .title("CAB 4"));
-
-             //Marker movingMarker = mMap.addMarker(new MarkerOptions().position(route.points.get(0)));
+            //Marker movingMarker = mMap.addMarker(new MarkerOptions().position(route.points.get(0)));
             for (int i = 0; i < route.points.size(); i++) {
                 polylineOptions.add(route.points.get(i));
             }
-                polylinePaths.add(mMap.addPolyline(polylineOptions));
-           // for (int i = 0; i < routes.size(); i++) {
-                animateMarker(routes.get(0).startLocation
-                        , routes.get(0).endLocation);
-           // }
+            polylinePaths.add(mMap.addPolyline(polylineOptions));
+//            for (int i = 0; i < routes.size(); i++) {
+//                animateMarker(routes.get(i).startLocation
+//                        , routes.get(i).endLocation);
+//            }
+//            if (selectedMarker != null) {
+//
+//                setAnimation(mMap, routes.get(0).points, selectedMarker);
+//                selectedMarker = null;
+//            }
+
         }
     }
 
@@ -355,4 +409,53 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
 
     }
 
+    public static void setAnimation(GoogleMap myMap, final List<LatLng> directionPoint, Marker marker) {
+
+
+//        Marker marker = myMap.addMarker(new MarkerOptions()
+//                .icon(BitmapDescriptorFactory.fromResource(R.drawable.taxi2))
+//                .position(directionPoint.get(0))
+//                .flat(true));
+
+        // myMap.animateCamera(CameraUpdateFactory.newLatLngZoom(directionPoint.get(0), 10));
+
+        animateMarker(myMap, marker, directionPoint, false);
+    }
+
+
+    private static void animateMarker(GoogleMap myMap, final Marker marker, final List<LatLng> directionPoint,
+                                      final boolean hideMarker) {
+        final Handler handler = new Handler();
+        final long start = SystemClock.uptimeMillis();
+        Projection proj = myMap.getProjection();
+        final long duration = 30000;
+
+        final Interpolator interpolator = new LinearInterpolator();
+
+        handler.post(new Runnable() {
+            int i = 0;
+
+            @Override
+            public void run() {
+                long elapsed = SystemClock.uptimeMillis() - start;
+                float t = interpolator.getInterpolation((float) elapsed
+                        / duration);
+                if (i < directionPoint.size())
+                    marker.setPosition(directionPoint.get(i));
+                i++;
+
+
+                if (t < 1.0) {
+                    // Post again 16ms later.
+                    handler.postDelayed(this, 16);
+                } else {
+                    if (hideMarker) {
+                        marker.setVisible(false);
+                    } else {
+                        marker.setVisible(true);
+                    }
+                }
+            }
+        });
+    }
 }
