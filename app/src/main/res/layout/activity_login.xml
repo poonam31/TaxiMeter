@@ -7,6 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/homepage2"
     tools:context="com.example.shwetlana.project.LoginActivity">
 
 
@@ -34,7 +35,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:text="abc"/>
-    //android:hint="Password" />
+
 
     <Button
         android:layout_width="wrap_content"
@@ -47,10 +48,11 @@
         android:layout_alignRight="@+id/etPassword"
         android:layout_alignEnd="@+id/etPassword" />
 
-    <TextView
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/black"
         android:text="Register Here"
         android:id="@+id/tvRegisterHere"
         android:layout_below="@+id/bLogin"
