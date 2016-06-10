@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
@@ -52,6 +53,7 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
     private Button btnFindPath;
     //private EditText etOrigin;
     //private EditText etDestination;
+    private List<Marker> movingmarker = new ArrayList<>();
     private List<Marker> originMarkers = new ArrayList<>();
     private List<Marker> destinationMarkers = new ArrayList<>();
     private List<Polyline> polylinePaths = new ArrayList<>();
@@ -60,7 +62,6 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
     private TextView tvRatePerMile;
     double ratePerMile = 0;
     private Marker marker;
-
     AutoCompleteTextView etDestination;
     AutoCompleteTextView etOrigin;
     String to = "";
@@ -79,6 +80,9 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
     private List<Route> taxiPath;
 //    private Marker selectedMarker;
     // private AnimatingMarkersFragment mapFragment;
+
+    HashMap<LatLng,String> markeradress = new HashMap<LatLng,String>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -241,7 +245,7 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
 
                             List<LatLng> tmpListroute = new ArrayList<LatLng>();
                             tmpListroute.addAll(route.get(0).points);
-                            System.out.print("points sss"+route.get(0).points);
+                            System.out.print("points sss" + route.get(0).points);
                             if (taxiPath != null) {
                                 List<LatLng> mainPath = taxiPath.get(0).points;
                                 for (LatLng item :
@@ -254,7 +258,7 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
                                 setAnimation(mMap, tmpListroute, marker);
                             }
                         }
-                    }, marker.getSnippet(), etOrigin.getText().toString()).execute();
+                    },marker.getSnippet(), etOrigin.getText().toString()).execute();
                 } catch (Exception e) {
                     progressDialog.dismiss();
                     e.printStackTrace();
@@ -263,7 +267,6 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
             }
         });
     }
-
 
     @Override
     public void onDirectionFinderStart() {
@@ -287,11 +290,13 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
                 polyline.remove();
             }
         }
-    }
 
+            mMap.clear();
+    }
     @Override
     public void onDirectionFinderSuccess(List<Route> routes) {
         taxiPath = routes;
+
         progressDialog.dismiss();
         polylinePaths = new ArrayList<>();
         originMarkers = new ArrayList<>();
@@ -315,24 +320,25 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
                     geodesic(true)./*
                     color(Color.BLUE).*/
                     width(10);
-            //get origin's location
+
             double originLat =  route.startLocation.latitude;
             double originLng = route.startLocation.longitude;
 
 
             double[] cabloc2 = getLocation(originLng,originLat,3000);
             LatLng cab2 = new LatLng(cabloc2[0], cabloc2[1]);
-                  mMap.addMarker(new MarkerOptions()
+            movingmarker.add(mMap.addMarker(new MarkerOptions()
                           .icon(BitmapDescriptorFactory.fromResource(R.drawable.taxi2))
                           .position(cab2)
-                          .title("CAB 2").snippet("333 covina"));
+                          .title("CAB 2").snippet("Long Beach Fwy East Los ANgeles, CA 90022")));
 
-            double[] cabloc3 = getLocation(originLng,originLat,3000);
+            double[] cabloc3 = getLocation(originLng,originLat,4000);
             LatLng cab3 = new LatLng(cabloc3[0], cabloc3[1]);
-            mMap.addMarker(new MarkerOptions()
+            movingmarker.add(mMap.addMarker(new MarkerOptions()
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.taxi2))
                     .position(cab3)
-                    .title("CAB 3").snippet("2121 LA"));
+                    .title("CAB 3").snippet("EL Monte Busaway Los Angeles,CA 90063")));
+
 
 //            double[] cabloc4 = getLocation(originLng,originLat,3000);
 //            LatLng cab4 = new LatLng(cabloc4[0], cabloc4[1]);
@@ -348,6 +354,7 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
                 polylineOptions.add(route.points.get(i));
             }
             polylinePaths.add(mMap.addPolyline(polylineOptions));
+
 //            for (int i = 0; i < routes.size(); i++) {
 //                animateMarker(routes.get(i).startLocation
 //                        , routes.get(i).endLocation);
@@ -357,7 +364,6 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
 //                setAnimation(mMap, routes.get(0).points, selectedMarker);
 //                selectedMarker = null;
 //            }
-
         }
     }
 
@@ -423,7 +429,7 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
         Random random2 = new Random();
 
         // Convert radius from meters to degrees
-        double radiusInDegrees = radius / 111000f;
+        double radiusInDegrees = radius/ 111000f;
 
         double u = random.nextDouble();
         double v = random2.nextDouble();
@@ -440,8 +446,6 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
         double[] location = new double[2];
         location[0] = foundLatitude;
         location[1] = foundLongitude;
-
-        System.out.println("Longitude: " + foundLongitude + "  Latitude: " + foundLatitude );
 
         return location;
     }
@@ -487,7 +491,7 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
 //                .flat(true));
 
         // myMap.animateCamera(CameraUpdateFactory.newLatLngZoom(directionPoint.get(0), 10));
-
+        Log.i("on---------",marker.getPosition().toString());
         animateMarker(myMap, marker, directionPoint, false);
     }
 
@@ -497,7 +501,7 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
         final Handler handler = new Handler();
         final long start = SystemClock.uptimeMillis();
         Projection proj = myMap.getProjection();
-        final long duration = 30000;
+        final long duration = 25000;
 
         final Interpolator interpolator = new LinearInterpolator();
 
@@ -513,10 +517,9 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
                     marker.setPosition(directionPoint.get(i));
                 i++;
 
-
                 if (t < 1.0) {
                     // Post again 16ms later.
-                    handler.postDelayed(this, 16);
+                    handler.postDelayed(this, 150);
                 } else {
                     if (hideMarker) {
                         marker.setVisible(false);
