@@ -41,6 +41,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.io.UnsupportedEncodingException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,6 +63,8 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
     double ratePerMile = 0;
     private Marker mm;// =
     private List<LatLng> pathpoints = new ArrayList<>();
+
+    Marker mmm;
 
     AutoCompleteTextView etDestination;
     AutoCompleteTextView etOrigin;
@@ -143,10 +146,9 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
 
                 distance = tvDistance.getText().toString();
                 String[] res = distance.split("\\s+");
-
+                DecimalFormat deci = new DecimalFormat("0.00");
                 double f = Double.valueOf(res[0]) * Double.valueOf(tvRatePerMile.getText().toString());
-
-                String dd = "  $" + f + "";
+                String dd = "  $" + deci.format(f) + "";
 
                 tvCalculatedPrice.setVisibility(View.VISIBLE);
                 tvCalculatedPrice.setText(dd);
@@ -292,63 +294,16 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
         }
         mm = mMap.addMarker(new MarkerOptions().position(pathpoints.get(0)));
         mm.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+
         //mm.setVisible(false);
-        /*for(int i = 1; i < 40; i++) {
+        /*for(int i = 1; i < pathpoints.size(); i++) {
             animateMarker(pathpoints.get(i - 1), pathpoints.get(i));
-        }*/
-        animateMarker(pathpoints.get(0), pathpoints.get(79));
+        }
+        */
+       animateMarker(pathpoints.get(0), pathpoints.get(79));
+
         notification();
         //
-    }
-
-    public void changeCurrentPosMarker(LatLng latLng) {
-        // add marker
-        if (mm != null) {
-            mm.remove();
-        }
-        MarkerOptions options = new MarkerOptions()
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green))
-                .snippet("")
-                .position(latLng);
-        mm = mMap.addMarker(options);
-
-    }
-
-    public void animates(final Marker mm, final LatLng toPosition/*,
-                              final boolean hideMarker*/) {
-        final Handler handler = new Handler();
-        final long start = SystemClock.uptimeMillis();
-
-
-        final long duration = 20000;
-        final LinearInterpolator interpolator = new LinearInterpolator();
-
-
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                //Log.i("------------------", marker.toString());
-                long elapsed = SystemClock.uptimeMillis() - start;
-                float t = interpolator.getInterpolation((float) elapsed
-                        / duration);
-                double lng = t * toPosition.longitude + (1 - t)
-                        * mm.getPosition().longitude;
-                double lat = t * toPosition.latitude + (1 - t)
-                        * mm.getPosition().latitude;
-                //mm.remove();
-                //mm.setPosition(new LatLng(lat, lng));
-                //mm = mMap.addMarker(new MarkerOptions().position(new LatLng(lat,lng)));
-                mm.setPosition(toPosition);
-                mm.setVisible(true);
-                //mm.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-                if (t < 1.0) {
-                    // Post again 16ms later.
-                    handler.postDelayed(this, 16);
-                }
-            }
-        });
-        Log.i("Marker postion---------",mm.getPosition().toString());
-
     }
 
     public void animateMarker(final LatLng fromPosition, final LatLng toPosition/*,
@@ -378,9 +333,7 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
 
                 //mm = mMap.addMarker(new MarkerOptions().position(toPosition));
                 //mm.setPosition(toPosition);
-                Log.i("-------------", t + "");
 
-                Log.i("-------------", lat + lng + "");
                 mm.setPosition(new LatLng(lat, lng));
                 mm.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
                 if (t < 1.0) {
@@ -400,7 +353,7 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
                         .setContentText("Your Taxi Arrived!");
 
         NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                (NotificationManager) getSystemService(this.NOTIFICATION_SERVICE);
         mNotificationManager.notify(1, mBuilder.build());
     }
     private void panCamera() {
@@ -417,7 +370,7 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
 
         googleMap.animateCamera(
                 CameraUpdateFactory.newCameraPosition(cameraPosition),
-                3000,
+                8000,
                 new GoogleMap.CancelableCallback() {
 
                     @Override
