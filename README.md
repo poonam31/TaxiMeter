@@ -1,7 +1,9 @@
 == Taxi Meter ==
+
 Android Application - Get reliable rides!
 
 == Contributors ==
+
 Sagar, Shwetlana, Suhani, Poonam
 
 
