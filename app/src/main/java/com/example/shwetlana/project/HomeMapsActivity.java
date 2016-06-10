@@ -222,29 +222,7 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
         }
         mMap.setMyLocationEnabled(false);
         mMap.setOnMyLocationChangeListener(myLocationChangeListener);
-        LatLng cab1 = new LatLng(34.069433, -118.167755);
-        mMap.addMarker(new MarkerOptions()
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.taxi2))
-                .position(cab1)
-                .title("CAB 1").snippet("Northeast Los Angeles, Los Angeles, CA, USA"));
 
-            /*LatLng cab2 = new LatLng(34.057345, -118.172390);
-            mMap.addMarker(new MarkerOptions()
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.taxi2))
-                    .position(cab2)
-                    .title("CAB 2"));*/
-
-        LatLng cab3 = new LatLng(34.076827, -118.156769);
-        mMap.addMarker(new MarkerOptions()
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.taxi2))
-                .position(cab3)
-                .title("CAB 3").snippet("2956 W Shorb St, Alhambra, CA 91803, USA"));
-
-        LatLng cab4 = new LatLng(34.051254, -118.165439);
-        mMap.addMarker(new MarkerOptions()
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.taxi2))
-                .position(cab4)
-                .title("CAB 4").snippet("Monterey Park, CA, USA"));
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(final Marker marker) {
@@ -263,6 +241,7 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
 
                             List<LatLng> tmpListroute = new ArrayList<LatLng>();
                             tmpListroute.addAll(route.get(0).points);
+                            System.out.print("points sss"+route.get(0).points);
                             if (taxiPath != null) {
                                 List<LatLng> mainPath = taxiPath.get(0).points;
                                 for (LatLng item :
@@ -341,22 +320,29 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
             double originLng = route.startLocation.longitude;
 
 
-            //get cabs at near area
-            // pass the seleted price by user , seekbar price
-            ArrayList<String> cabList = (ArrayList<String>) getCabsFromNearArea((HashMap<String, String>) params, Float.parseFloat(tvRatePerMile.getText().toString()));
+            double[] cabloc2 = getLocation(originLng,originLat,3000);
+            LatLng cab2 = new LatLng(cabloc2[0], cabloc2[1]);
+                  mMap.addMarker(new MarkerOptions()
+                          .icon(BitmapDescriptorFactory.fromResource(R.drawable.taxi2))
+                          .position(cab2)
+                          .title("CAB 2").snippet("333 covina"));
 
-            Iterator<String> itr = cabList.iterator();
-            while (itr.hasNext()) {
-                String cab = itr.next();
-                double[] cab1_loc = getLocation(originLng,originLat,3000);
-                LatLng cab1 = new LatLng(cab1_loc[0], cab1_loc[1]);
+            double[] cabloc3 = getLocation(originLng,originLat,3000);
+            LatLng cab3 = new LatLng(cabloc3[0], cabloc3[1]);
+            mMap.addMarker(new MarkerOptions()
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.taxi2))
+                    .position(cab3)
+                    .title("CAB 3").snippet("2121 LA"));
 
-                mMap.addMarker(new MarkerOptions()
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.taxi2))
-                        .position(cab1)
-                        .title(cab));
+//            double[] cabloc4 = getLocation(originLng,originLat,3000);
+//            LatLng cab4 = new LatLng(cabloc4[0], cabloc4[1]);
+//            mMap.addMarker(new MarkerOptions()
+//                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.taxi2))
+//                    .position(cab4)
+//                    .title("CAB 4").snippet("5151 LA"));
 
-            }
+
+
             //Marker movingMarker = mMap.addMarker(new MarkerOptions().position(route.points.get(0)));
             for (int i = 0; i < route.points.size(); i++) {
                 polylineOptions.add(route.points.get(i));
@@ -413,11 +399,6 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
     {
         List<String> cabList = new ArrayList<String>();
 
-//        Map<String, String> params = new HashMap<>();
-//        params.put("cab_2.5", "2.5");
-//        params.put("cab_4", "4");
-//        params.put("cab_3","3");
-
         Iterator it = params.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry)it.next();
@@ -432,41 +413,6 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
 
         return cabList;
 
-        //////////////////
-//        //get taxis from database
-//        float selectedprice = 5; // set it to seekbar value
-//        final String[] cabname = {""};
-//
-//        Response.Listener<String> responseListener = new Response.Listener<String>(){
-//
-//            @Override
-//            public void onResponse(String response) {
-//
-//                try {
-//                    JSONObject jsonResponse = new JSONObject(response);
-//
-//                    boolean success = jsonResponse.getBoolean("success");
-//
-//                    if(success)
-//                    {
-//                        cabname[0] = jsonResponse.getString("cabname");
-//                        int cabprice = jsonResponse.getInt("cabprice");
-//
-//                    }
-//
-//
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//
-//            }
-//        };
-//
-//        HomeMapsRequest homeMapsRequest = new HomeMapsRequest(selectedprice, responseListener);
-//        RequestQueue queue = Volley.newRequestQueue(HomeMapsActivity.this);
-//        queue.add(homeMapsRequest);
-//
-//        return cabname[0];
 
     }
 
