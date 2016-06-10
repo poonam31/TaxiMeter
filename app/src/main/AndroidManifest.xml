@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.shwetlana.project"
-    android:screenOrientation="sensorLandscape">
+    android:screenOrientation="portrait">
 
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -33,19 +33,16 @@
 
         <activity
             android:name=".HomeMapsActivity"
-            android:label="@string/title_activity_home_maps">
-
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
+            android:label="@string/title_activity_home_maps"
+            android:configChanges="orientation|screenSize">
         </activity>
+
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:configChanges="orientation|screenSize"/>
+
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -53,16 +50,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".RegisterActivity" />
         <activity android:name=".UserAreaActivity" />
+
         <activity
             android:name=".MainNavigationActivity"
             android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:configChanges="orientation|screenSize"/>
+
         <activity
             android:name=".NavigationActivity"
             android:label="@string/title_activity_main_navigation"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:configChanges="orientation|screenSize"/>
     </application>
 
 </manifest>
