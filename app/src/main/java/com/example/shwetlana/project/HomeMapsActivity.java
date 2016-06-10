@@ -35,7 +35,11 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 import Modules.DirectionFinder;
 import Modules.DirectionFinderListener;
@@ -68,6 +72,7 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
     Button btnCalculate;
     TextView tvCalculatedPrice;
     TextView tvDistance;
+    Map<String, String> params;
 
     private GoogleMap googleMap;
     private Button btnLogout;
@@ -98,6 +103,12 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
 
         tvDistance = (TextView) findViewById(R.id.tvDistance);
         tvCalculatedPrice = (TextView) findViewById(R.id.tvCalculatedPrice);
+
+        params = new HashMap<>();
+        params.put("cab_2.5", "2.5");
+        params.put("cab_4", "4");
+        params.put("cab_3","3");
+
 
 
         btnFindPath.setOnClickListener(new View.OnClickListener() {
@@ -325,8 +336,27 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
                     geodesic(true)./*
                     color(Color.BLUE).*/
                     width(10);
+            //get origin's location
+            double originLat =  route.startLocation.latitude;
+            double originLng = route.startLocation.longitude;
 
 
+            //get cabs at near area
+            // pass the seleted price by user , seekbar price
+            ArrayList<String> cabList = (ArrayList<String>) getCabsFromNearArea((HashMap<String, String>) params, Float.parseFloat(tvRatePerMile.getText().toString()));
+
+            Iterator<String> itr = cabList.iterator();
+            while (itr.hasNext()) {
+                String cab = itr.next();
+                double[] cab1_loc = getLocation(originLng,originLat,3000);
+                LatLng cab1 = new LatLng(cab1_loc[0], cab1_loc[1]);
+
+                mMap.addMarker(new MarkerOptions()
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.taxi2))
+                        .position(cab1)
+                        .title(cab));
+
+            }
             //Marker movingMarker = mMap.addMarker(new MarkerOptions().position(route.points.get(0)));
             for (int i = 0; i < route.points.size(); i++) {
                 polylineOptions.add(route.points.get(i));
@@ -377,6 +407,99 @@ public class HomeMapsActivity extends FragmentActivity implements OnMapReadyCall
             }
         });
     }
+
+    //get cabs which are near
+    public List<String> getCabsFromNearArea(HashMap<String,String> params, float selectedprice)
+    {
+        List<String> cabList = new ArrayList<String>();
+
+//        Map<String, String> params = new HashMap<>();
+//        params.put("cab_2.5", "2.5");
+//        params.put("cab_4", "4");
+//        params.put("cab_3","3");
+
+        Iterator it = params.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+
+            float val = Float.parseFloat(pair.getValue().toString());
+            if(val <= selectedprice)
+                cabList.add(pair.getKey().toString());
+
+            //System.out.println(pair.getKey() + " = " + pair.getValue());
+            it.remove(); // avoids a ConcurrentModificationException
+        }
+
+        return cabList;
+
+        //////////////////
+//        //get taxis from database
+//        float selectedprice = 5; // set it to seekbar value
+//        final String[] cabname = {""};
+//
+//        Response.Listener<String> responseListener = new Response.Listener<String>(){
+//
+//            @Override
+//            public void onResponse(String response) {
+//
+//                try {
+//                    JSONObject jsonResponse = new JSONObject(response);
+//
+//                    boolean success = jsonResponse.getBoolean("success");
+//
+//                    if(success)
+//                    {
+//                        cabname[0] = jsonResponse.getString("cabname");
+//                        int cabprice = jsonResponse.getInt("cabprice");
+//
+//                    }
+//
+//
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//
+//            }
+//        };
+//
+//        HomeMapsRequest homeMapsRequest = new HomeMapsRequest(selectedprice, responseListener);
+//        RequestQueue queue = Volley.newRequestQueue(HomeMapsActivity.this);
+//        queue.add(homeMapsRequest);
+//
+//        return cabname[0];
+
+    }
+
+    //to get longitude, latitude around specified radious 
+    //pass longitude x0, latitude y0, radius 
+    public double[] getLocation(double x0, double y0, int radius) {
+        Random random = new Random();
+        Random random2 = new Random();
+
+        // Convert radius from meters to degrees
+        double radiusInDegrees = radius / 111000f;
+
+        double u = random.nextDouble();
+        double v = random2.nextDouble();
+        double w = radiusInDegrees * Math.sqrt(u);
+        double t = 2 * Math.PI * v;
+        double x = w * Math.cos(t);
+        double y = w * Math.sin(t);
+
+        // Adjust the x-coordinate for the shrinking of the east-west distances
+        double new_x = x / Math.cos(y0);
+
+        double foundLongitude = new_x + x0;
+        double foundLatitude = y + y0;
+        double[] location = new double[2];
+        location[0] = foundLatitude;
+        location[1] = foundLongitude;
+
+        System.out.println("Longitude: " + foundLongitude + "  Latitude: " + foundLatitude );
+
+        return location;
+    }
+
 
     private void panCamera() {
 
