@@ -1,4 +1,4 @@
-== Taxi Meter ==
+#Taxi Meter
 
 Android Application - Get reliable rides!
 
